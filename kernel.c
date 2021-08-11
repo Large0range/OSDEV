@@ -110,7 +110,7 @@ void toString(char *ptr, int length, int t) {
     if (t == 0) break;
   }
 
-  //reverseString(ca, length);
+  reverseString(ca, strlen(ca));
 
   memcpy(ptr, ca, length);
 }
@@ -169,16 +169,15 @@ void kernel_main(void)
 {
 	terminal_initialize();
 
-	terminal_writestring("Hello, kernel World!\n");
-	terminal_writestring("test1\n");
+	//terminal_writestring("Hello, kernel World!\n");
+	//terminal_writestring("test1\n");
 
   char string[100];
+
   for (size_t i = 0; i < VGA_HEIGHT; i++) {
     memSet(string, 0, 100);
     toString(string, 100, i);
     terminal_writestring(string);
-    terminal_writestring("\n");
-
-    //terminal_writestring("test\n");
+		terminal_writestring("\n");
   }
 }
