@@ -1,22 +1,24 @@
 .PHONY: build test
+.SUFFIX: .o .c .h
 
 INCLUDE_DIR=include
-OBJS = $(wildcard $(INCLUDE_DIR)/Build/*.o)
 SOURCE = $(wildcard $(INCLUDE_DIR)/C/*.c)
+HEADERS = $(wildcard $(INCLUDE_DIR)/headers/*.h)
+OBJS = $(subst include/C/,include/Build/,$(patsubst %.c,%.o, $(SOURCE)))
 
 build: Ghost.bin
 
 test:
-	echo $(SOURCE)
+	$(OBJS)
 
-Ghost.bin: kernel.o boot.o $(INCLUDE_DIR)/Build/memory.o linker.ld
-	i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -O2 -nostdlib boot.o kernel.o $(OBJS) -lgcc
-
-#kernel.o: kernel.c
-#	i686-elf-gcc -c kernel.c -o kernel.o -I$(INCLUDE_DIR)headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+Ghost.bin: kernel.o boot.o $(OBJS) linker.ld
+	i686-elf-gcc -T linker.ld -o Ghost.bin -ffreestanding -O2 -nostdlib boot.o kernel.o $(OBJS) -lgcc
 
 boot.o: boot.s
 	i686-elf-as boot.s -o boot.o
 
-.c.o:
+kernel.o: kernel.c
 	i686-elf-gcc -c $^ -o $@ -I$(INCLUDE_DIR)/headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+
+$(INCLUDE_DIR)/Build/%.o: $(INCLUDE_DIR)/C/%.c $(INCLUDE_DIR)/headers/%.h
+	i686-elf-gcc -c $< -o $@ -I$(INCLUDE_DIR)/headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
