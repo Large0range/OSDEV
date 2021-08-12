@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <memory.h>
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -32,34 +33,21 @@ enum vga_color {
 	VGA_COLOR_WHITE = 15,
 };
 
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
-{
+static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
 	return fg | bg << 4;
 }
 
-static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
-{
+static inline uint16_t vga_entry(unsigned char uc, uint8_t color) {
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
-size_t strlen(const char* str)
-{
+size_t strlen(const char* str) {
 	size_t len = 0;
 	while (str[len])
 		len++;
 	return len;
 }
 
-void memcpy(void *dest, void *origin, size_t length) {
-
-  char *cdest = (char *)dest;
-  char *corigin = (char *)origin;
-
-  for (size_t i = 0; i < length; i++) {
-    cdest[i] = corigin[i];
-  }
-
-}
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -69,12 +57,11 @@ size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
 
-void terminal_initialize(void)
-{
+void terminal_initialize(void) {
 	terminal_row = 0;
 	terminal_column = 0;
 	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-	terminal_buffer = (uint16_t*) 0xB8000;
+	terminal_buffer = (uint16_t*) 0xC03FF000;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
@@ -93,13 +80,6 @@ void reverseString(char *ptr, size_t length) {
   memcpy(ptr, ca, length);
 }
 
-void memSet(void *ptr, char ascii, size_t length) {
-  char *cptr = (char *)ptr;
-
-  for (size_t i = 0; i < length; i++) {
-    cptr[i] = ascii;
-  }
-}
 
 void toString(char *ptr, int length, int t) {
   char ca[length];
@@ -123,61 +103,56 @@ void terminal_scroll() {
   }
 }
 
-void terminal_setcolor(uint8_t color)
-{
+void terminal_setcolor(uint8_t color) {
 	terminal_color = color;
 }
 
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
-{
+void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 	if (c == '\n') {
 		terminal_row++;
 		terminal_column = -1;
 		return;
 	}
 
-  if (terminal_row == VGA_HEIGHT) {
-    terminal_scroll();
-    terminal_row = VGA_HEIGHT - 1;
-  }
-
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 }
 
-void terminal_putchar(char c)
-{
+void terminal_putchar(char c) {
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
     terminal_row++;
 	}
+
+	if (terminal_row == VGA_HEIGHT) {
+		terminal_scroll();
+		terminal_row = VGA_HEIGHT - 1;
+	}
 }
 
-void terminal_write(const char* data, size_t size)
-{
+void terminal_write(const char* data, size_t size) {
 	for (size_t i = 0; i < size; i++)
 		terminal_putchar(data[i]);
 }
 
-void terminal_writestring(const char* data)
-{
+void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
 }
 
-void kernel_main(void)
-{
+void terminal_clear() {
+	for (size_t x = 0; x < VGA_WIDTH; x++) {
+		for (size_t y = 0; y < VGA_HEIGHT; y++) {
+			terminal_putentryat(' ', terminal_color, x, y);
+		}
+	}
+}
+
+void kernel_main(void) {
 	terminal_initialize();
 
-	//terminal_writestring("Hello, kernel World!\n");
-	//terminal_writestring("test1\n");
-
-  char string[100];
-
-  for (size_t i = 0; i < VGA_HEIGHT; i++) {
-    memSet(string, 0, 100);
-    toString(string, 100, i);
-    terminal_writestring(string);
-		terminal_writestring("\n");
-  }
+	terminal_writestring("Initialized Kernel...");
+	int a = 10;
+	int *ptr = (int *)0x01000000;
+	*ptr = 12;
 }
