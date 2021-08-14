@@ -56,7 +56,10 @@ void kernel_main(void) {
 	terminal_writestring("Initialized Kernel...\n");
 
 	terminal_writestring("Detecting Memory...");
-	/*SMAP_entry_t* smap = (SMAP_entry_t*) 0x1000;
+	//int *ptr = (int *)0x00007E00;
+	//*ptr
+
+	SMAP_entry_t* smap = (SMAP_entry_t*) 0x00007E00;
 	const int smap_size = 0x2000;
 
 	int entry_count = detectMemory(smap, smap_size / sizeof(SMAP_entry_t));
@@ -64,6 +67,6 @@ void kernel_main(void) {
 	if (entry_count == -1) {
 		terminal_writestring("Error Finding Memory");
 	} else {
-
-	}*/
+		terminal_writestring("fine");
+	}
 }
