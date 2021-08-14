@@ -12,16 +12,16 @@ test:
 	$(OBJS)
 
 Ghost.bin: kernel.o boot.o $(OBJS) linker.ld
-	i686-elf-gcc -T linker.ld -o Ghost.bin -ffreestanding -O2 -nostdlib boot.o kernel.o $(OBJS) -lgcc
+	x86_64-elf-gcc -T linker.ld -o Ghost.bin -ffreestanding -O2 -nostdlib boot.o kernel.o $(OBJS) -lgcc
 
 boot.o: boot.asm
 	nasm -f elf32 boot.asm -o boot.o
 
 kernel.o: kernel.c
-	i686-elf-gcc -c $^ -o $@ -I$(INCLUDE_DIR)/headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	x86_64-elf-gcc -c $^ -o $@ -I$(INCLUDE_DIR)/headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
 $(INCLUDE_DIR)/Build/%.o: $(INCLUDE_DIR)/C/%.c $(INCLUDE_DIR)/headers/%.h
-	i686-elf-gcc -c $< -o $@ -I$(INCLUDE_DIR)/headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	x86_64-elf-gcc -c $< -o $@ -I$(INCLUDE_DIR)/headers -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
 clean:
 	rm *.o
