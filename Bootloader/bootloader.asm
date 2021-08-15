@@ -7,6 +7,7 @@ _start:
     mov ds, ax
     mov es, ax
     mov ss, ax
+		mov bp, 0x8000      ; Stack base pointer at SS:SP = 0x0000:0x8000
     mov sp, 0x8000      ; Stack pointer at SS:SP = 0x0000:0x8000
     mov [BOOT_DRIVE], dl; Boot drive passed to us by the BIOS
     mov dh, 17          ; Number of sectors (kernel.bin) to read from disk
