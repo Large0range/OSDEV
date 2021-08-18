@@ -16,12 +16,15 @@ boot.bin: boot.asm
 	rm boot.o
 	rm boot.elf
 
-kernel.bin: kernel.c linker.ld
+kernel.bin: kernel.c linker.ld $(OBJECTS)
 	gcc -m32 -c -ffreestanding kernel.c -o kernel.o
-	ld -m elf_i386 -Tlinker.ld kernel.o -o kernel.elf
+	ld -m elf_i386 -Tlinker.ld kernel.o $(OBJECTS) -o kernel.elf
 	objcopy -O binary kernel.elf kernel.bin
 	rm kernel.elf
 	rm kernel.o
+
+$(SOURCEDIR)/Build/%.o: $(SOURCEDIR)/C/%.c $(SOURCEDIR)/headers/%.h
+	gcc -m32 -c -ffreestanding $< -o $@
 
 variables:
 	echo $(SOURCEDIR)
