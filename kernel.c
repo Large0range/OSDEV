@@ -1,9 +1,11 @@
 __asm__ (".pushsection .text.start\r\njmp main\r\n.popsection");
 
+#include <terminal.h>
+
 int main() {
-	
-	char *video_memory = (char *)0xb8000;
-	video_memory[0] = 'C';
+	terminal_initialize();
+
+	terminal_writestring("Boobies");
 
 	return 0;
 }
