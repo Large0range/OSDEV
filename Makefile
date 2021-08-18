@@ -1,4 +1,4 @@
-.PHONY: clean variables
+.PHONY: clean run variables
 
 SOURCEDIR=include
 SOURCE=$(wildcard $(SOURCEDIR)/C/*.c)
@@ -8,6 +8,9 @@ disk.img: boot.bin kernel.bin
 	dd if=/dev/zero of=disk.img bs=512 count=2880
 	dd if=boot.bin of=disk.img bs=512 conv=notrunc
 	dd if=kernel.bin of=disk.img bs=512 seek=1 conv=notrunc
+
+run: disk.img
+	qemu-system-x86_64 -drive file=disk.img,format=raw
 
 boot.bin: boot.asm
 	nasm -f elf32 -F dwarf boot.asm -o boot.o
