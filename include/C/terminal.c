@@ -15,6 +15,17 @@ void terminal_initialize(void) {
 	}
 }
 
+void terminal_clear(void) {
+	terminal_row = 0;
+	terminal_column = 0;
+	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t index = x + y * VGA_WIDTH;
+			video_memory[index] = vga_entry(' ', terminal_color);
+		}
+	}
+}
+
 void terminal_setcolor(uint8_t color) {
 	terminal_color = color;
 }

@@ -3,6 +3,7 @@
 SOURCEDIR=include
 SOURCE=$(wildcard $(SOURCEDIR)/C/*.c)
 OBJECTS=$(patsubst $(SOURCEDIR)/C/%.c,$(SOURCEDIR)/Build/%.o,$(SOURCE))
+SKELETON=idt.asm
 
 disk.img: boot.bin extend.bin
 	dd if=/dev/zero of=disk.img bs=512 count=2880
@@ -32,7 +33,7 @@ kernel.o: kernel.c
 $(SOURCEDIR)/Build/%.o: $(SOURCEDIR)/C/%.c $(SOURCEDIR)/headers/%.h
 	gcc -m32 -c -ffreestanding -I $(SOURCEDIR)/headers $< -o $@
 
-extend.bin: extend.asm kernel.o
+extend.bin: extend.asm kernel.o $(OBJECTS) $(SKELETON)
 	nasm -f elf32 -F dwarf extend.asm -o extend.o
 	ld -m elf_i386 -Tlinker.ld extend.o kernel.o $(OBJECTS) -o extend.elf
 	objcopy -O binary extend.elf extend.bin

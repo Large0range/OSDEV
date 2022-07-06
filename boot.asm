@@ -1,5 +1,8 @@
 [bits 16]
 
+MemoryRegionCount:
+	db 0
+
 mov bp, 0x8000
 mov sp, bp
 
@@ -7,8 +10,32 @@ mov bx, boot
 call print_string
 
 mov bx, 0x9000
-mov dh, 17
+mov dh, 20
 call load_kernel
+
+mov ah, 0x01
+mov ch, 0x3F
+int 0x10
+
+mov ax, 0
+mov es, ax
+mov di, 0x5000
+mov edx, 0x0534D4150
+xor ebx, ebx
+
+repeat:
+mov eax, 0xe820
+mov ecx, 24
+int 0x15
+
+cmp ebx, 0
+je finish
+
+add di, 24
+inc byte [MemoryRegionCount]
+jmp repeat
+
+finish:
 
 cli ;Disable interrupts
 call enable_a20 ; enable the a20 line
@@ -79,8 +106,8 @@ print_string:
 	ret
 
 ;Variables
-boot db "16 Bit Real Mode", 0
-read_error db "Could Not Read Disk", 0
+boot db "16 Bit Real Mode", 10, 0
+read_error db "Could Not Read Disk", 10, 0
 
 [bits 32]
 ;Runner

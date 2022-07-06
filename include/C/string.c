@@ -8,7 +8,33 @@ size_t strlen(const char *str) {
 	return len;
 }
 
-void toString(char *dest, size_t size, int source) {
+void hexToString(char *dest, int source) {
+	size_t hexSize = 0;
+	int cSource = source;
+
+	dest[0] = '0';
+	dest[1] = 'x';
+
+	while (1) {
+		cSource /= 16;
+		hexSize++;
+		if (cSource == 0) break;
+	}
+
+	for (size_t i = hexSize + 1; i >= 1; i--) {
+		unsigned short rm = source % 16;
+		if (rm < 10) 
+			dest[i] = 48 + rm;
+		else
+			dest[i] = 87 + rm;
+		source /= 16;
+		if (source == 0) break;
+	}
+
+	dest[hexSize + 2] = 0;
+}
+
+void intToString(char *dest, int source) {
 	size_t integerSize = 0;
 	int cSource = source;
 
