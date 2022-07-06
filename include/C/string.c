@@ -38,7 +38,6 @@ void intToString(char *dest, int source) {
 	size_t integerSize = 0;
 	int cSource = source;
 
-
 	while (1) {
 		cSource /= 10;
 		integerSize++;

@@ -1,6 +1,7 @@
 #include <VGA.h>
 #include <string.h>
 #include <terminal.h>
+#include <stdint.h>
 
 void terminal_initialize(void) {
 	terminal_row = 0;
@@ -36,12 +37,11 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 }
 
 void terminal_scroll() {
-	for (size_t i = 0; i < VGA_WIDTH; i++) {
-		for (size_t y = 0; y < VGA_HEIGHT; y++) {
-			for (size_t x = 0; x < VGA_WIDTH; x++) {
-				const size_t index = y * VGA_WIDTH + x;
-				video_memory[index] = video_memory[index + 1];
-			}
+	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t index1 = x + (y+1) * VGA_WIDTH;
+			const size_t index2 = x + y * VGA_WIDTH;
+			video_memory[index2] = video_memory[index1];
 		}
 	}
 }

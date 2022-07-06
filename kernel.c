@@ -3,6 +3,7 @@
 #include <terminal.h>
 #include <string.h>
 #include <memory.h>
+#include <stdint.h>
 
 int main() {
 	terminal_writestring("LOADED INTO 64 BIT KERNEL");
@@ -10,22 +11,20 @@ int main() {
 		
 	terminal_writestring("GhostOS Loaded\n");
 
-//	terminal_putchar(memoryCount + 48);
-//	terminal_writestring(" Available Memory Sections\n");
-
-	char dest[100];
-
 	getMapEntries();
+	setupHeap();
 
-	for (char i = 0; i < entryCount-1; i++) {
-		mapEntry *map = (mapEntry *)0x5000;
-		map += i;
-
+	for (char i = 0; i < entryCount; i++) {
+		mapEntry *map = mapEntries[i]; 
 		printMapEntry(map);
 
 		terminal_writestring("\n");
 		
 	}
 	
+	void *ptr = malloc(10);	
+
+	free(ptr);
+
 	return 0;
 }

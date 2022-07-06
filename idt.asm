@@ -12,6 +12,7 @@ zero:
 	iretq
 
 code: 
+
 	iretq
 
 label:

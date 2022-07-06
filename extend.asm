@@ -4,7 +4,7 @@
 extern terminal_initialize
 extern terminal_writestring
 extern main
-
+	
 ;clear screen
 call terminal_initialize
 
