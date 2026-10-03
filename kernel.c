@@ -8,21 +8,21 @@
 int main() {
 	terminal_writestring("LOADED INTO 64 BIT KERNEL");
 	terminal_clear();
-		
+
 	terminal_writestring("GhostOS Loaded\n");
 
 	getMapEntries();
 	setupHeap();
 
-	for (char i = 0; i < entryCount; i++) {
-		mapEntry *map = mapEntries[i]; 
+	for (size_t i = 0; i < entryCount; i++) {
+		mapEntry *map = mapEntries[i];
 		printMapEntry(map);
 
 		terminal_writestring("\n");
-		
+
 	}
-	
-	void *ptr = malloc(10);	
+
+	void *ptr = malloc(10);
 
 	free(ptr);
 

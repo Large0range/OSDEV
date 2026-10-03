@@ -4,14 +4,14 @@ idt:
 	times 256*16 db 0
 idt_end:
 
-idt_descriptor
+idt_descriptor:
 	dw idt_end - idt - 1
 	dq idt
 
 zero:
 	iretq
 
-code: 
+code:
 
 	iretq
 
@@ -23,7 +23,7 @@ setupIDT:
 	mov eax, 256
 	mov ecx, 2
 	mul ecx
-	
+
 	mov ecx, eax
 
 	.setupLoop:
@@ -34,7 +34,7 @@ setupIDT:
 	mov word [idt+rcx*8+0], ax
 	mov word [idt+rcx*8+2], codeseg
 	mov byte [idt+rcx*8+4], 0
-	mov byte [idt+rcx*8+5], 10101110b
+	mov byte [idt+rcx*8+5], 10001110b
 	shr rax, 16
 	mov word [idt+rcx*8+6], ax
 	shr rax, 16
@@ -45,19 +45,15 @@ setupIDT:
 	jnz .setupLoop
 
 	mov rax, code
-	mov word [idt+1*8+0], ax
-	mov word [idt+1*8+2], codeseg
-	mov byte [idt+1*8+4], 0
-	mov byte [idt+1*8+5], 10101110b
+	mov word [idt+1*16+0], ax
+	mov word [idt+1*16+2], codeseg
+	mov byte [idt+1*16+4], 0
+	mov byte [idt+1*16+5], 10001110b
 	shr rax, 16
-	mov word [idt+rcx*8+6], ax
+	mov word [idt+1*16+6], ax
 	shr rax, 16
-	mov dword [idt+1*8+8], eax
-	mov dword [idt+1*8+12], 0
+	mov dword [idt+1*16+8], eax
+	mov dword [idt+1*16+12], 0
 
 	pop rcx
 	ret
-
-
-
-	

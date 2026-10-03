@@ -1,25 +1,7 @@
 [bits 32]
 
-;extern commands
-extern terminal_initialize
-extern terminal_writestring
-extern main
-	
-;clear screen
-call terminal_initialize
-
 ;save edx
 push edx
-
-;info tag 1
-push dword tag1
-call terminal_writestring
-pop dx
-
-;info tag 2
-push dword tag2
-call terminal_writestring
-pop dx
 
 ;restore edx
 pop edx
@@ -29,25 +11,22 @@ pop edx
 ;detect cpuid
 call detectCPUID
 
-push dword detected
-call terminal_writestring
-pop dx
-
 call longModeAvailable
-
-push dword longModeSupported
-call terminal_writestring
-pop dx
 
 call setupPaging
 call editGDT
 
-push dword longModeJumping
-call terminal_writestring
-pop dx
 
+lgdt [gdt_descriptor]
+
+mov eax, cr0
+or eax, 1 << 31
+mov cr0, eax
+
+mov dword [0xb8000], 0x0f4b0f4f    ; "OK" in white on black
 
 jmp codeseg:LongMode
+
 
 jmp $
 
@@ -89,7 +68,7 @@ longModeAvailable:
 	cpuid
 	cmp eax, 0x80000001
 	jb .none
-	
+
 	mov eax, 0x80000001
 	cpuid
 	test edx, 1 << 29
@@ -110,7 +89,7 @@ setupPaging:
 
 	mov dword [edi], 0x2003
 	add edi, 0x1000
-	mov dword [edi], 0x30003
+	mov dword [edi], 0x3003
 	add edi, 0x1000
 	mov dword [edi], 0x4003
 	add edi, 0x1000
@@ -132,7 +111,7 @@ setupPaging:
 	mov ecx, 0xC0000080
 	rdmsr
 	or eax, 1 << 8
-	wrsmr
+	wrmsr
 
 
 	ret
@@ -154,6 +133,12 @@ kernelBoot db 'LOADING GHOSTOS KERNEL', 10, 0
 [bits 64]
 %include "idt.asm"
 
+;extern commands
+extern main
+extern terminal_initialize
+extern terminal_writestring
+
+
 LongMode:
 	cli
 	mov ax, dataseg
@@ -163,22 +148,22 @@ LongMode:
 	mov gs, ax
 	mov ss, ax
 
-	push dword longModeSuccess
+
+	call terminal_initialize
+
+	mov rdi, longModeSuccess
 	call terminal_writestring
-	pop dx
-	
+
 	call setupIDT
 	lidt [idt_descriptor]
 
 	sti
 
-	push dword idtSetup
+	mov rdi, idtSetup
 	call terminal_writestring
-	pop dx
 
-	push dword kernelBoot
+	mov rdi, kernelBoot
 	call terminal_writestring
-	pop dx
 
 	call main
 

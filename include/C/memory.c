@@ -1,6 +1,7 @@
 #include <memory.h>
 #include <terminal.h>
 #include <stddef.h>
+#include <string.h>
 
 void memset(void *src, char set, size_t size) {
 	char *csrc = src;
@@ -62,14 +63,14 @@ void printMapEntry(mapEntry *map) {
 }
 
 mapEntry **getMapEntries() {
-	totalCount = *((unsigned char *)(0x7c00));	
+	totalCount = *((unsigned char *)(0x7c00));
 
 	size_t index = 0;
 
-	for (char i = 0; i < totalCount; i++) {
+	for (size_t i = 0; i < totalCount; i++) {
 		mapEntry *entry = (mapEntry *)(0x5000);
 		entry += i;
-		
+
 		allEntries[i] = entry;
 
 		if (entry->regionType == 1) {
@@ -86,7 +87,7 @@ mapEntry **getMapEntries() {
 void setupHeap() {
 	heapMemory = (uint8_t *)(mapEntries[0]->baseAddress);
 	heapSize = mapEntries[0]->regionLength;
-	heapBlockSize = 128; 
+	heapBlockSize = 128;
 	heapIndex = 0;
 }
 
@@ -100,13 +101,13 @@ void *malloc(size_t size) {
 	*((uint16_t *)(heapMemory + heapIndex * heapBlockSize + 6)) = heapIndex;
 
 	uint8_t *ptr = (uint8_t *)(heapMemory + heapIndex * heapBlockSize+8);
-	for (size_t i = 8; i < heapBlockSize; i++) {
+	for (size_t i = 0; i < heapBlockSize - 8; i++) {
 		ptr[i] = 0;
 	}
 
 	heapIndex++;
-	for (size_t i = heapIndex; i < 50; i++) {
-		if (memcmp((void *)(heapMemory + i * heapBlockSize), "HEADER", 6) == 0) {
+	for (size_t i = 0; i < 50; i++) {
+		if (memcmp((void *)(heapMemory + i * heapBlockSize), "HEADER", 6) != 0) {
 			heapIndex = i;
 			break;
 		}
@@ -115,7 +116,7 @@ void *malloc(size_t size) {
 	return (void *)(ptr);
 }
 
-void free(void *ptr) {	
+void free(void *ptr) {
 	char *locator = (char *)ptr;
 
 	for (size_t i = 0; i < heapBlockSize; i++) {
@@ -132,5 +133,5 @@ void free(void *ptr) {
 		locator++;
 	}
 
-	heapIndex = *((uint16_t *)(locator));
+	//heapIndex = *((uint16_t *)(locator));
 }

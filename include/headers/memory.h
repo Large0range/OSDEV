@@ -36,6 +36,7 @@ void memset(void *src, char set, size_t size);
 void memcpy(void *dest, void *src, size_t size);
 uint8_t memcmp(void *src1, void *src2, size_t size);
 
+void setupHeap();
 void printMapEntry(mapEntry *map);
 mapEntry **getMapEntries();
 
