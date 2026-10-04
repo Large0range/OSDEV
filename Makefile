@@ -52,7 +52,7 @@ run: disk.img
 
 # Exit on triple fault instead of rebooting, and log interrupts/exceptions to stderr.
 debug: disk.img
-	qemu-system-x86_64 -drive file=disk.img,format=raw -no-reboot -no-shutdown -d int,cpu_reset
+	qemu-system-x86_64 -drive file=disk.img,format=raw -no-reboot -no-shutdown -d int,cpu_reset -monitor stdio
 
 variables:
 	@echo SOURCEDIR=$(SOURCEDIR)

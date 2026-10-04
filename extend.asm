@@ -117,10 +117,6 @@ setupPaging:
 	ret
 
 
-tag1 db 'BOOTED EXTENDED PROGRAM', 10, 0
-tag2 db '32 BIT PROTECTED MODE', 10, 0
-
-detected db 'CPUID SUPPORTED', 10, 0
 
 longModeSupported db 'LONG MODE SUPPORTED', 10, 0
 longModeJumping db 'JUMPING TO LONG MODE', 10, 0
@@ -149,6 +145,10 @@ LongMode:
 	mov ss, ax
 
 
+    mov dword [0xb8004], 0x0f4b0f4f    ; "OK" in white on black
+
+    mov rsp, 0x90000
+
 	call terminal_initialize
 
 	mov rdi, longModeSuccess
@@ -157,7 +157,7 @@ LongMode:
 	call setupIDT
 	lidt [idt_descriptor]
 
-	sti
+	;sti
 
 	mov rdi, idtSetup
 	call terminal_writestring

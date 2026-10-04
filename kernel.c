@@ -6,8 +6,8 @@
 #include <stdint.h>
 
 int main() {
-	terminal_writestring("LOADED INTO 64 BIT KERNEL");
-	terminal_clear();
+	terminal_writestring("LOADED INTO 64 BIT KERNEL\n");
+	//terminal_clear();
 
 	terminal_writestring("GhostOS Loaded\n");
 
