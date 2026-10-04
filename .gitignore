@@ -1,6 +1,8 @@
 disk.img
+kernel.d
 *.bin
 *.o
 *.elf
+
 include/Build/*.o
 include/Build/*.d
