@@ -1,3 +1,6 @@
 disk.img
-kernel.bin
-boot.bin
+*.bin
+*.o
+*.elf
+include/Build/*.o
+include/Build/*.d
