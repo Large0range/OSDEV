@@ -23,7 +23,7 @@ void hexToString(char *dest, int source) {
 
 	for (size_t i = hexSize + 1; i >= 1; i--) {
 		unsigned short rm = source % 16;
-		if (rm < 10) 
+		if (rm < 10)
 			dest[i] = 48 + rm;
 		else
 			dest[i] = 87 + rm;
@@ -54,10 +54,9 @@ void intToString(char *dest, int source) {
 }
 
 void reverseString(char *src, char *dest, size_t size) {
-	char *csrc;
-	memcpy(csrc, dest, strlen(src));
+    int len = strlen(src);
 
 	for (size_t i = 0; i < strlen(src); i++) {
-		dest[i] = csrc[strlen(src) - i - 1];
+		dest[i] = src[len - i - 1];
 	}
 }
