@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <stdint.h>
 #include <terminal.h>
 #include <stddef.h>
 #include <string.h>
@@ -38,14 +39,14 @@ void printMapEntry(mapEntry *map) {
 	char dest[20];
 
 	memset(dest, 0, 20);
-	intToString(dest, map->baseAddress);
+	hexToString(dest, map->baseAddress);
 	terminal_writestring("Base Address: ");
 	terminal_writestring(dest);
 	terminal_writestring("\n");
 
 	memset(dest, 0, 20);
 	intToString(dest, map->regionLength);
-	terminal_writestring("Region Length: ");
+	terminal_writestring("Region Length (bytes): ");
 	terminal_writestring(dest);
 	terminal_writestring("\n");
 
@@ -85,53 +86,63 @@ mapEntry **getMapEntries() {
 }
 
 void setupHeap() {
-	heapMemory = (uint8_t *)(mapEntries[0]->baseAddress);
+	heapBase = (uint8_t *)(mapEntries[0]->baseAddress+HEAP_ALIGN);
 	heapSize = mapEntries[0]->regionLength;
-	heapBlockSize = 128;
-	heapIndex = 0;
+	heapTop = heapSize + heapBase;
+	heapPointer = heapBase;
+	*(heapEntry *)heapPointer = (heapEntry){NULL, NULL, 8, 0};
 }
 
-void *malloc(size_t size) {
-	*((char *)(heapMemory + heapIndex * heapBlockSize + 0)) = 'H'; //write HEADER dictates it's being used
-	*((char *)(heapMemory + heapIndex * heapBlockSize + 1)) = 'E';
-	*((char *)(heapMemory + heapIndex * heapBlockSize + 2)) = 'A';
-	*((char *)(heapMemory + heapIndex * heapBlockSize + 3)) = 'D';
-	*((char *)(heapMemory + heapIndex * heapBlockSize + 4)) = 'E';
-	*((char *)(heapMemory + heapIndex * heapBlockSize + 5)) = 'R';
-	*((uint16_t *)(heapMemory + heapIndex * heapBlockSize + 6)) = heapIndex;
+void *malloc(uint8_t size) {
+    uint8_t index = 0;
+    heapEntry *lastPointer;
+    heapEntry *i = (heapEntry *)heapPointer;
 
-	uint8_t *ptr = (uint8_t *)(heapMemory + heapIndex * heapBlockSize+8);
-	for (size_t i = 0; i < heapBlockSize - 8; i++) {
-		ptr[i] = 0;
-	}
+    //heapwalk
+    for (; i->nextEntry != NULL; i = (heapEntry *)i->nextEntry) {
+        terminal_writestring("h");
 
-	heapIndex++;
-	for (size_t i = 0; i < 50; i++) {
-		if (memcmp((void *)(heapMemory + i * heapBlockSize), "HEADER", 6) != 0) {
-			heapIndex = i;
-			break;
-		}
-	}
+    }
 
-	return (void *)(ptr);
+    index = i->index;
+    lastPointer = i;
+
+    //align to heap align at next block
+    i = ALIGN_DOWN((void *)i+i->entrySize+sizeof(heapEntry)-1, HEAP_ALIGN)+HEAP_ALIGN;
+
+    lastPointer->nextEntry = (uint64_t *)i;
+
+    //create stamp
+    *i = (heapEntry){NULL, (uint64_t *)lastPointer, size, index + 1};
+    heapPointer = (uint8_t *)i;
+
+    return (void *)i + sizeof(heapEntry);
 }
 
 void free(void *ptr) {
-	char *locator = (char *)ptr;
+    heapEntry *entry = ALIGN_DOWN(ptr, HEAP_ALIGN);
 
-	for (size_t i = 0; i < heapBlockSize; i++) {
-		if (*locator == 'H') {
-			if (memcmp(locator, "HEADER", 6) == 0) {
-				break;
-			}
-		}
-		locator--;
-	}
+    heapEntry *n = (heapEntry *)entry->nextEntry;
+    heapEntry *l = (heapEntry *)entry->lastEntry;
 
-	for (size_t i = 0; i < 6; i++) {
-		*locator = 0;
-		locator++;
-	}
+    if (n != NULL) n->lastEntry = (uint64_t *)l;
+    if (l != NULL) l->nextEntry = (uint64_t *)n;
 
-	//heapIndex = *((uint16_t *)(locator));
+   	char dest[20];
+	hexToString(dest, (int)entry);
+	terminal_writestring("\n");
+	terminal_writestring(dest);
+}
+
+void writeHeapEntry(heapEntry entry, void *location) {
+    heapEntry *p = (heapEntry *)location;
+    *p = entry;
+
+    char *ps = (char *)location + sizeof(heapEntry);
+    ps[0] = 'h';
+    ps[1] = 'e';
+    ps[2] = 'a';
+    ps[3] = 'd';
+    ps[4] = 'e';
+    ps[5] = 'r';
 }

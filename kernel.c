@@ -1,5 +1,6 @@
 //__asm__ (".pushsection .text.start\r\njmp main\r\n.popsection");
 
+#include "include/headers/string.h"
 #include <terminal.h>
 #include <string.h>
 #include <memory.h>
@@ -22,7 +23,12 @@ int main() {
 
 	}
 
-	void *ptr = malloc(10);
+	int *ptr = (int *)malloc(8);
+	*ptr = 0x12345;
+
+	int *ptr2 = (int *)malloc(8);
+	*ptr2 = 0x2345;
+
 
 	free(ptr);
 

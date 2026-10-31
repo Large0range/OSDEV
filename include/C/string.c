@@ -44,7 +44,7 @@ void intToString(char *dest, int source) {
 		if (cSource == 0) break;
 	}
 
-	for (size_t i = integerSize - 1; i >= 0; i--) {
+	for (int i = integerSize - 1; i >= 0; i--) {
 		dest[i] = 48 + source % 10;
 		source /= 10;
 		if (source == 0) {
@@ -54,9 +54,7 @@ void intToString(char *dest, int source) {
 }
 
 void reverseString(char *src, char *dest, size_t size) {
-    int len = strlen(src);
-
-	for (size_t i = 0; i < strlen(src); i++) {
-		dest[i] = src[len - i - 1];
+	for (size_t i = 0; i < size; i++) {
+		dest[i] = src[size - i - 1];
 	}
 }

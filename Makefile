@@ -32,7 +32,7 @@ boot.bin: boot.asm gdt.asm
 # Stage 2: extend.asm + all the 64-bit C objects, linked at 0x9000.
 extend.bin: extend.asm idt.asm gdt.asm linker.ld $(KERNEL_OBJ) $(OBJECTS)
 	nasm -f elf64 extend.asm -o extend.o
-	ld -m elf_x86_64 -T linker.ld extend.o $(KERNEL_OBJ) $(OBJECTS) -o extend.elf
+	ld -m elf_x86_64 -T linker.ld --no-warn-rwx-segments extend.o $(KERNEL_OBJ) $(OBJECTS) -o extend.elf
 	objcopy -O binary extend.elf $@
 	rm -f extend.o extend.elf
 	@test $$(stat -c %s $@) -le $(MAX_EXTEND_BYTES) || \

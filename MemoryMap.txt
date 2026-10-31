@@ -1,0 +1,20 @@
+0x5000 - memory region map buffer stored
+- each entry is 24 bytes
+    bytes       use
+    [0-7]       base address
+    [8-15]      length in bytes
+    [16-19]     type of address range
+    [19-23]     extended attributes
+
+Values for System Memory Map address type:
+01h    memory, available to OS
+02h    reserved, not available (e.g. system ROM, memory-mapped device)
+03h    ACPI Reclaim Memory (usable by OS after reading ACPI tables)
+04h    ACPI NVS Memory (OS is required to save this memory between NVS
+sessions)
+other  not defined yet -- treat as Reserved
+---------------------------------------------------------------------------
+0x7c00 - start of boot.asm, first byte is available memory regions
+0x7e00 - end of boot.asm
+
+0x9000 - stored kernel

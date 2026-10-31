@@ -1,4 +1,5 @@
 [bits 32]
+section .text.start progbits alloc exec nowrite align=16
 
 ;save edx
 push edx
@@ -127,6 +128,7 @@ idtSetup db 'IDT SETUP INTERRUPTS RENABLED', 10, 0
 kernelBoot db 'LOADING GHOSTOS KERNEL', 10, 0
 
 [bits 64]
+DEFAULT ABS
 %include "idt.asm"
 
 ;extern commands

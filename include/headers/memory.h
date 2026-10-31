@@ -1,6 +1,12 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#define HEAP_ALIGN 32
+#define ALIGN_UP(ptr, size) \
+    ((void*)(((uintptr_t)(ptr) + ((size) - 1)) & ~((size) - 1)))
+#define ALIGN_DOWN(ptr, size) \
+    ((void*)(((uintptr_t)(ptr) & ~((size) - 1))))
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -12,8 +18,10 @@ typedef struct {
 } mapEntry;
 
 typedef struct {
-	uint16_t index;
-	uint8_t data[510];
+    uint64_t *nextEntry;
+    uint64_t *lastEntry;
+    uint8_t entrySize;
+    uint8_t index;
 } heapEntry;
 
 
@@ -23,13 +31,12 @@ mapEntry *mapEntries[10];
 unsigned char totalCount;
 unsigned char entryCount;
 
-uint8_t *heapMemory;
+uint8_t *heapBase;
+uint8_t *heapTop;
 uint8_t *heapPointer;
 uint64_t heapSize;
-uint32_t heapBlockSize;
-uint16_t heapIndex;
 
-void *malloc(size_t size);
+void *malloc(uint8_t size);
 void free(void *ptr);
 
 void memset(void *src, char set, size_t size);
