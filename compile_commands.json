@@ -1,0 +1,158 @@
+[
+  {
+    "file": "boot.asm",
+    "arguments": [
+      "/usr/bin/nasm",
+      "-f",
+      "elf32",
+      "boot.asm",
+      "-o",
+      "boot.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "boot.o"
+  },
+  {
+    "file": "kernel.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-m64",
+      "-ffreestanding",
+      "-fno-pic",
+      "-fno-pie",
+      "-fno-stack-protector",
+      "-mno-red-zone",
+      "-mgeneral-regs-only",
+      "-Wall",
+      "-Wextra",
+      "-MMD",
+      "-MP",
+      "-I",
+      "include/headers",
+      "-fcommon",
+      "-c",
+      "kernel.c",
+      "-o",
+      "kernel.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "kernel.o"
+  },
+  {
+    "file": "include/C/memory.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-m64",
+      "-ffreestanding",
+      "-fno-pic",
+      "-fno-pie",
+      "-fno-stack-protector",
+      "-mno-red-zone",
+      "-mgeneral-regs-only",
+      "-Wall",
+      "-Wextra",
+      "-MMD",
+      "-MP",
+      "-I",
+      "include/headers",
+      "-fcommon",
+      "-c",
+      "include/C/memory.c",
+      "-o",
+      "include/Build/memory.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "include/Build/memory.o"
+  },
+  {
+    "file": "include/C/string.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-m64",
+      "-ffreestanding",
+      "-fno-pic",
+      "-fno-pie",
+      "-fno-stack-protector",
+      "-mno-red-zone",
+      "-mgeneral-regs-only",
+      "-Wall",
+      "-Wextra",
+      "-MMD",
+      "-MP",
+      "-I",
+      "include/headers",
+      "-fcommon",
+      "-c",
+      "include/C/string.c",
+      "-o",
+      "include/Build/string.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "include/Build/string.o"
+  },
+  {
+    "file": "include/C/terminal.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-m64",
+      "-ffreestanding",
+      "-fno-pic",
+      "-fno-pie",
+      "-fno-stack-protector",
+      "-mno-red-zone",
+      "-mgeneral-regs-only",
+      "-Wall",
+      "-Wextra",
+      "-MMD",
+      "-MP",
+      "-I",
+      "include/headers",
+      "-fcommon",
+      "-c",
+      "include/C/terminal.c",
+      "-o",
+      "include/Build/terminal.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "include/Build/terminal.o"
+  },
+  {
+    "file": "include/C/test.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "-m64",
+      "-ffreestanding",
+      "-fno-pic",
+      "-fno-pie",
+      "-fno-stack-protector",
+      "-mno-red-zone",
+      "-mgeneral-regs-only",
+      "-Wall",
+      "-Wextra",
+      "-MMD",
+      "-MP",
+      "-I",
+      "include/headers",
+      "-fcommon",
+      "-c",
+      "include/C/test.c",
+      "-o",
+      "include/Build/test.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "include/Build/test.o"
+  },
+  {
+    "file": "extend.asm",
+    "arguments": [
+      "/usr/bin/nasm",
+      "-f",
+      "elf64",
+      "extend.asm",
+      "-o",
+      "extend.o"
+    ],
+    "directory": "/home/alex/Desktop/OSDEV",
+    "output": "extend.o"
+  }
+]

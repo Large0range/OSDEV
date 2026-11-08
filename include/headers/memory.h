@@ -28,8 +28,7 @@ typedef struct {
 mapEntry *allEntries[10];
 mapEntry *mapEntries[10];
 
-unsigned char totalCount;
-unsigned char entryCount;
+uint8_t entryCount;
 
 uint8_t *heapBase;
 uint8_t *heapTop;

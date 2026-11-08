@@ -1,7 +1,6 @@
 #include <memory.h>
 #include <stdint.h>
 #include <terminal.h>
-#include <stddef.h>
 #include <string.h>
 
 void memset(void *src, char set, size_t size) {
@@ -64,7 +63,7 @@ void printMapEntry(mapEntry *map) {
 }
 
 mapEntry **getMapEntries() {
-	totalCount = *((unsigned char *)(0x7c00));
+	unsigned char totalCount = *((unsigned char *)(0x7c00));
 
 	size_t index = 0;
 
@@ -99,10 +98,7 @@ void *malloc(uint8_t size) {
     heapEntry *i = (heapEntry *)heapPointer;
 
     //heapwalk
-    for (; i->nextEntry != NULL; i = (heapEntry *)i->nextEntry) {
-        terminal_writestring("h");
-
-    }
+    for (; i->nextEntry != NULL; i = (heapEntry *)i->nextEntry) ;
 
     index = i->index;
     lastPointer = i;
@@ -127,22 +123,4 @@ void free(void *ptr) {
 
     if (n != NULL) n->lastEntry = (uint64_t *)l;
     if (l != NULL) l->nextEntry = (uint64_t *)n;
-
-   	char dest[20];
-	hexToString(dest, (int)entry);
-	terminal_writestring("\n");
-	terminal_writestring(dest);
-}
-
-void writeHeapEntry(heapEntry entry, void *location) {
-    heapEntry *p = (heapEntry *)location;
-    *p = entry;
-
-    char *ps = (char *)location + sizeof(heapEntry);
-    ps[0] = 'h';
-    ps[1] = 'e';
-    ps[2] = 'a';
-    ps[3] = 'd';
-    ps[4] = 'e';
-    ps[5] = 'r';
 }

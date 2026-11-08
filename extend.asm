@@ -117,7 +117,47 @@ setupPaging:
 
 	ret
 
+	PIC1_CMD  equ 0x20
+	PIC1_DATA equ 0x21
+	PIC2_CMD  equ 0xA0
+	PIC2_DATA equ 0xA1
 
+	remapPIC:
+    ; ICW1: start init, ICW4 will follow
+    mov al, 0x11
+    out PIC1_CMD, al
+    out 0x80, al            ; io_wait
+    out PIC2_CMD, al
+    out 0x80, al
+
+    ; ICW2: vector offsets
+    mov al, 0x20            ; master: IRQ0-7  -> 32-39
+    out PIC1_DATA, al
+    out 0x80, al
+    mov al, 0x28            ; slave:  IRQ8-15 -> 40-47
+    out PIC2_DATA, al
+    out 0x80, al
+
+    ; ICW3: cascade wiring
+    mov al, 0x04            ; master: slave is on IRQ2 (bit 2)
+    out PIC1_DATA, al
+    out 0x80, al
+    mov al, 0x02            ; slave: its cascade ID is 2
+    out PIC2_DATA, al
+    out 0x80, al
+
+    ; ICW4: 8086 mode
+    mov al, 0x01
+    out PIC1_DATA, al
+    out 0x80, al
+    out PIC2_DATA, al
+    out 0x80, al
+
+    ; mask every IRQ
+    mov al, 0xFF
+    out PIC1_DATA, al
+    out PIC2_DATA, al
+    ret
 
 longModeSupported db 'LONG MODE SUPPORTED', 10, 0
 longModeJumping db 'JUMPING TO LONG MODE', 10, 0
@@ -158,8 +198,9 @@ LongMode:
 
 	call setupIDT
 	lidt [idt_descriptor]
+	call remapPIC
 
-	;sti
+	sti
 
 	mov rdi, idtSetup
 	call terminal_writestring
@@ -171,4 +212,4 @@ LongMode:
 
 	jmp $
 
-times 5120-($-$$) db 0
+;times 5120-($-$$) db 0
