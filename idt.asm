@@ -52,6 +52,19 @@ control:
     pop rdi
     iretq
 
+
+stackalignfault:
+    and rsp, -16
+    call genfaulthang
+
+genfaulthang:
+    pop rdi
+    call dumpRegisters
+    .faultloop:
+    cli
+    hlt
+    jmp .faultloop
+
 setupIDT:
 	push rcx
 	mov rcx, 16
@@ -82,7 +95,7 @@ setupIDT:
 	dec rcx
 	dec rcx
 
-	mov rax, zero
+	mov rax, genfaulthang
 	mov word [idt+rcx*8+0], ax
 	mov word [idt+rcx*8+2], codeseg
 	mov byte [idt+rcx*8+4], 0
@@ -121,7 +134,7 @@ setupIDT:
 	mov dword [idt+8*16+12], 0
 
 	;floating point fault
-	mov rax, zero
+	mov rax, genfaulthang
 	mov word [idt+9*16+0], ax
 	mov word [idt+9*16+2], codeseg
 	mov byte [idt+9*16+4], 0
@@ -193,7 +206,7 @@ setupIDT:
 
 	; 15 intel reserved
 
-	mov rax, zero
+	mov rax, genfaulthang
 	mov word [idt+16*16+0], ax
 	mov word [idt+16*16+2], codeseg
 	mov byte [idt+16*16+4], 0
@@ -215,7 +228,7 @@ setupIDT:
 	mov dword [idt+17*16+8], eax
 	mov dword [idt+17*16+12], 0
 
-	mov rax, zero
+	mov rax, genfaulthang
 	mov word [idt+18*16+0], ax
 	mov word [idt+18*16+2], codeseg
 	mov byte [idt+18*16+4], 0
@@ -226,7 +239,7 @@ setupIDT:
 	mov dword [idt+18*16+8], eax
 	mov dword [idt+18*16+12], 0
 
-	mov rax, zero
+	mov rax, genfaulthang
 	mov word [idt+19*16+0], ax
 	mov word [idt+19*16+2], codeseg
 	mov byte [idt+19*16+4], 0
@@ -237,7 +250,7 @@ setupIDT:
 	mov dword [idt+19*16+8], eax
 	mov dword [idt+19*16+12], 0
 
-	mov rax, zero
+	mov rax, genfaulthang
 	mov word [idt+20*16+0], ax
 	mov word [idt+20*16+2], codeseg
 	mov byte [idt+20*16+4], 0
@@ -248,7 +261,7 @@ setupIDT:
 	mov dword [idt+20*16+8], eax
 	mov dword [idt+20*16+12], 0
 
-	mov rax, control
+	mov rax, stackalignfault
 	mov word [idt+21*16+0], ax
 	mov word [idt+21*16+2], codeseg
 	mov byte [idt+21*16+4], 0

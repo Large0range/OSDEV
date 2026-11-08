@@ -122,7 +122,7 @@ setupPaging:
 	PIC2_CMD  equ 0xA0
 	PIC2_DATA equ 0xA1
 
-	remapPIC:
+remapPIC:
     ; ICW1: start init, ICW4 will follow
     mov al, 0x11
     out PIC1_CMD, al
@@ -170,6 +170,7 @@ kernelBoot db 'LOADING GHOSTOS KERNEL', 10, 0
 [bits 64]
 DEFAULT ABS
 %include "idt.asm"
+%include "dump.asm"
 
 ;extern commands
 extern main
@@ -209,7 +210,6 @@ LongMode:
 	call terminal_writestring
 
 	call main
-
 	jmp $
 
 ;times 5120-($-$$) db 0

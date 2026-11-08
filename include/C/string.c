@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <stdint.h>
 #include <string.h>
 #include <stddef.h>
 
@@ -8,9 +9,9 @@ size_t strlen(const char *str) {
 	return len;
 }
 
-void hexToString(char *dest, int source) {
+void hexToString(char *dest, uint64_t source) {
 	size_t hexSize = 0;
-	int cSource = source;
+	uint64_t cSource = source;
 
 	dest[0] = '0';
 	dest[1] = 'x';
@@ -34,9 +35,9 @@ void hexToString(char *dest, int source) {
 	dest[hexSize + 2] = 0;
 }
 
-void intToString(char *dest, int source) {
+void intToString(char *dest, uint64_t source) {
 	size_t integerSize = 0;
-	int cSource = source;
+	uint64_t cSource = source;
 
 	while (1) {
 		cSource /= 10;

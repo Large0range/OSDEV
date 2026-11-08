@@ -15,7 +15,7 @@ call print_string
 ; load kernel store it in es:0x9000
 ; dh is sectors to read - 20
 mov bx, 0x9000
-mov dh, 20
+mov dh, 50
 call load_kernel
 
 ; setup cursor

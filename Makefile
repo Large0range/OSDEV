@@ -5,8 +5,8 @@ SOURCE     := $(wildcard $(SOURCEDIR)/C/*.c)
 OBJECTS    := $(patsubst $(SOURCEDIR)/C/%.c,$(SOURCEDIR)/Build/%.o,$(SOURCE))
 KERNEL_OBJ := kernel.o
 
-# boot.asm reads 20 sectors (`mov dh, 20`); keep these in sync
-MAX_EXTEND_BYTES := 10240
+# boot.asm reads 50 sectors (`mov dh, 50`); keep these in sync 512 per sector
+MAX_EXTEND_BYTES := 25600
 
 # One set of flags for every C file.
 # -MMD -MP writes .d files so changing a header rebuilds what includes it.
@@ -30,7 +30,7 @@ boot.bin: boot.asm gdt.asm
 	rm -f boot.o boot.elf
 
 # Stage 2: extend.asm + all the 64-bit C objects, linked at 0x9000.
-extend.bin: extend.asm idt.asm gdt.asm linker.ld $(KERNEL_OBJ) $(OBJECTS)
+extend.bin: extend.asm idt.asm gdt.asm dump.asm linker.ld $(KERNEL_OBJ) $(OBJECTS)
 	nasm -f elf64 extend.asm -o extend.o
 	ld -m elf_x86_64 -T linker.ld --no-warn-rwx-segments extend.o $(KERNEL_OBJ) $(OBJECTS) -o extend.elf
 	objcopy -O binary extend.elf $@
